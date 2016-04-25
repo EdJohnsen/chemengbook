@@ -1,1 +1,30 @@
-Text, text, and nothing but the text.
+As of 04/24/2016, make_index.php is a quick and dirty file that was meant to function as a proof of concept.
+
+make_index.php is a self-contained file that pulls information from an index file (which is generated separately using shareLatex )(outline.idx) and turns it into a web based index that points to pages in a pdf file.
+(https://www.sharelatex.com/)
+
+Within make_index.php is some html, a tiny bit of css, a quick mathjax configuration and call to a cdn based mathjax javascript file, and some php.
+
+The html doctype is html5
+
+The css is defined in a head style element.
+The css describes the layout of:
+	the body of the page (centered content and all lines with 1.4 line-height)
+	a content wrapper (#content)
+	each page (.page)
+	page columns (div)
+	placeholder divs (.nothing) which are used only because they fit with quick and dirty php loop code for page delineation
+	
+The javascript which configures mathjax is boilderplate for inline mathjax
+The javascript file calls a standard, ever updated version of mathjax with an additional configuration that is itself rather standard
+
+The php does only a few things
+	Make a connection to the outline.idx index file
+	Parse each line of the outline.idx file (removing unnecessary text and converting some latex to a more mathjax friendly format)(all via preg_replace and a related set of $pattern and $replacement arrays).
+		Each line is parsed into a multi-dimensional array whose first key contains the text to be shown in each entry and whose second key contains the page number for each entry. The value for each multi-dimensional array element is set to 1 simply to have it set to something. This action automatically removes any duplicate, first dimension keys from the array.
+	After the parsing is complete, the php code then loops through the multi-dimensional array.
+		In each 1st dimension loop, the text for each entry is appended to an $echo_this variable which itself will later be echoed from the server to each user.
+		In each 1st dimension loop, an if-conditional ensures that page columns are split every thirty entries and that a new page is made every 60 entries.
+		In each 2nd dimension loop, page links are added to the end of each index entry's text.
+
+And that's it, for now.
