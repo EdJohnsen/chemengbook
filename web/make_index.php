@@ -1,6 +1,8 @@
+<!-- Before we get to any php code, we allow the client to read some straight forward html -->
 <!doctype html>
 <html lang="en-us">
 <head>
+<!-- Here's a little bit of css to layout some very basic and imperfect paged index entries -->
 <style type="text/css">
 body {text-align:center; line-height:1.4;}
 div#content {width:86%; margin-left:auto; margin-right:auto; clear:both; height:auto; width:100%; float:none; text-align:left;}
@@ -8,6 +10,7 @@ div.nothing {width:0; height:0;}
 div {overflow:auto; width:40%; float:left; margin-left:2%; padding:0 0 30px 0;}
 div.page {overflow:auto; width:100%; clear:both; float:none; border-bottom:3px solid black; margin-bottom:30px;}
 </style>
+<!-- Now we configure and set the mathjax (pulled from a cdn source) -->
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
   tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
@@ -19,17 +22,14 @@ MathJax.Hub.Config({
 </head>
 <body>
 
+<!-- the php code starts here -->
 <?php
-
+// the $echo_this variable will get filled later and then sent to the client.
 $echo_this = "";
-
-// $start_time = microtime(true);
-
+// the $filename variable will be called upon when we open the outline.txt file (externally, I  changed the .idx file to a .txt file)
 $filename = "output.txt";
 
-// $echo_this .= "Last update unix time:" . filemtime($filename) . "<br>";
-
-//$string = 'The quick brown fox jumps over the lazy dog.';
+// these pattern and replacement arrays are used to clean out unwanted text from the outline.txt file and to convert some latex commands into more friendly mathjax formats
 $patterns = array();
 $patterns[0] = '/uuline/';
 $patterns[1] = '/uline/';
@@ -45,9 +45,7 @@ $replacements[3] = 'tilde';
 $replacements[4] = 'hat';
 $replacements[5] = 'dot';
 
-
-//echo preg_replace($patterns, $replacements, $string);
-
+// now we go ahead and open the output.txt file and start streaming out its content, line by line, and then parsing it into a 2-d array
 if ($stream = fopen('output.txt', 'r')) {
 	while (!feof($stream)) {
 		$line = fgets($stream);
@@ -64,10 +62,11 @@ if ($stream = fopen('output.txt', 'r')) {
 	}
 	fclose($stream);
 }
-//$end_time = microtime(true);
-//$time_taken = ($end_time - $start_time);
 
-//echo ceil($time_taken) . " seconds";
+// now we loop through the 2-d array, appending its contents into the $echo_this variable
+	// we make new pages and new columns (every 60 and 30 entries, respectively)
+	// we use the keys from the first dimensions as the text for each entry
+	// we use the keys from the second dimensions as the numerals for the pdf links for each entry
 $counter = 0;
 $echo_this .= "<div id='content'><div class='nothing'><div class='nothing'>";
 foreach($arrays as $key=>$value){
@@ -82,8 +81,9 @@ foreach($arrays as $key=>$value){
 	$echo_this .= " )<br>";
 	$counter++;
 }
+// finalize and echo the $echo_this variable
 $echo_this .= "</div></div></div>";
 echo "<br>" . $echo_this;
 ?>
 </body>
-</html>
+</html>0000
